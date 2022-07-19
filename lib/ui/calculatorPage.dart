@@ -3,7 +3,7 @@ import 'package:calculator/components/utils.dart';
 import 'package:calculator/components/enums.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:math_expressions/math_expressions.dart';
 
 class CalculatorPage extends StatefulWidget {
   const CalculatorPage({Key? key}) : super(key: key);
@@ -36,6 +36,9 @@ class _CalculatorPageState extends State<CalculatorPage>
     "⌫",
     "="
   ];
+
+  double textSize = 80;
+  var answer = '';
 
   Alignment startAlignment = const Alignment(-1, 0);
   Alignment endAlignment = const Alignment(1, 0);
@@ -148,7 +151,7 @@ class _CalculatorPageState extends State<CalculatorPage>
             Container(
               width: double.infinity,
               height: size.height * 0.25,
-              padding: const EdgeInsets.only(right: 20,left: 20),
+              padding: const EdgeInsets.only(right: 20, left: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -175,10 +178,9 @@ class _CalculatorPageState extends State<CalculatorPage>
                     enabled: false,
                     controller: _textEditingControllerMain,
                     style: TextStyle(
-                      fontSize: 80,
+                      fontSize: textSize,
                       color: clrText,
                       fontWeight: FontWeight.w300,
-
                     ),
                   ),
                 ],
@@ -217,7 +219,7 @@ class _CalculatorPageState extends State<CalculatorPage>
         child: InkWell(
           borderRadius: BorderRadius.circular(15),
           onTap: () {
-            calculationFun(index);
+            buttonFun(index);
           },
           child: Center(
             child: Text(
@@ -234,45 +236,77 @@ class _CalculatorPageState extends State<CalculatorPage>
     );
   }
 
-  calculationFun(int index) {
-    if (_textEditingControllerMain.text.toString() == "0") {
-      _textEditingControllerMain.text = "";
-    }
+  buttonFun(int index) {
     switch (symbols[index]) {
       case "0":
-        {
-          _textEditingControllerMain.text += symbols[index];
-        }
+        textAppend(text: symbols[index]);
         break;
       case "1":
-        _textEditingControllerMain.text += symbols[index];
+        textAppend(text: symbols[index]);
         break;
       case "2":
-        _textEditingControllerMain.text += symbols[index];
+        textAppend(text: symbols[index]);
         break;
       case "3":
-        _textEditingControllerMain.text += symbols[index];
+        textAppend(text: symbols[index]);
         break;
       case "4":
-        _textEditingControllerMain.text += symbols[index];
+        textAppend(text: symbols[index]);
         break;
       case "5":
-        _textEditingControllerMain.text += symbols[index];
+        textAppend(text: symbols[index]);
         break;
       case "6":
-        _textEditingControllerMain.text += symbols[index];
+        textAppend(text: symbols[index]);
         break;
       case "7":
-        _textEditingControllerMain.text += symbols[index];
+        textAppend(text: symbols[index]);
         break;
       case "8":
-        _textEditingControllerMain.text += symbols[index];
+        textAppend(text: symbols[index]);
         break;
       case "9":
-        _textEditingControllerMain.text += symbols[index];
+        textAppend(text: symbols[index]);
+        break;
+      case "+":
+        {
+          String temp = _textEditingControllerMain.text;
+          if (temp != "0" && temp != "") {
+            textAppend(text: symbols[index]);
+          }
+        }
+        break;
+      case "×":
+        {
+          String temp = _textEditingControllerMain.text;
+          if (temp != "0" && temp != "") {
+            textAppend(text: symbols[index]);
+          }
+        }
+        break;
+      case "-":
+        {
+          String temp = _textEditingControllerMain.text;
+          if (temp != "0" && temp != "") {
+            textAppend(text: symbols[index]);
+          }
+        }
+        break;
+      case "÷":
+        {
+          String temp = _textEditingControllerMain.text;
+          if (temp != "0" && temp != "") {
+            textAppend(text: symbols[index]);
+          }
+        }
+        break;
+      case "=":
+        // textAppend(text: symbols[index]);
         break;
       case "C":
-        _textEditingControllerMain.text = "0";
+        {
+          _
+        }
         break;
       case "⌫":
         {
@@ -284,6 +318,7 @@ class _CalculatorPageState extends State<CalculatorPage>
             temp = "0";
           }
           _textEditingControllerMain.text = temp;
+          textAppend();
         }
         break;
       case ".":
@@ -293,8 +328,56 @@ class _CalculatorPageState extends State<CalculatorPage>
             temp += ".";
           }
           _textEditingControllerMain.text = temp;
+          textAppend();
         }
         break;
     }
+  }
+
+  textAppend({String text = ""}) {
+    if (_textEditingControllerMain.text.toString() == "0") {
+      _textEditingControllerMain.text = "";
+    }
+    if (_textEditingControllerMain.text.length < 10) {
+      if (_textEditingControllerMain.text.length > 9) {
+        textSize = 50;
+      } else if (_textEditingControllerMain.text.length > 8) {
+        textSize = 60;
+      } else if (_textEditingControllerMain.text.length > 7) {
+        textSize = 70;
+      }
+      if (text.isNotEmpty) {
+        String temp = _textEditingControllerMain.text;
+        _textEditingControllerMain.text = temp + text;
+      }
+    }
+    setState(() {});
+  }
+
+  void equalPressed() {
+    String finaluserinput = _textEditingControllerMain.text;
+    finaluserinput = _textEditingControllerMain.text.replaceAll('×', '*');
+
+    Parser p = Parser();
+    Expression exp = p.parse(finaluserinput);
+    ContextModel cm = ContextModel();
+    double eval = exp.evaluate(EvaluationType.REAL, cm);
+    answer = eval.toString();
+  }
+
+  void showInSnackBar(String value) {
+    // ignore: deprecated_member_use
+    SnackBar(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      content: Text(
+        value,
+        style: const TextStyle(
+          color: Colors.red,
+          fontSize: 20,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      duration: const Duration(seconds: 1),
+    );
   }
 }
