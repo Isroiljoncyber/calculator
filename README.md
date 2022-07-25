@@ -1,16 +1,8 @@
-# calculator
+# Simple Calculator in Flutter with beautiful UI
 
-A new Flutter project.
+This project was done by Isroiljon on Flutter.
+This app uses simple mathematic equations and expressions and works on both Dark and Light mode. 
+The code is open source and if you want to use it please give me thums up and like.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![Screenshot from 2022-07-25 11-49-18](https://user-images.githubusercontent.com/65494864/180724197-08e3f022-d5e4-4e2e-bbd8-d5926b331e36.png)
+![Screenshot from 2022-07-25 12-38-43](https://user-images.githubusercontent.com/65494864/180724211-42f4decd-8d85-4937-9e44-1104965bfa8a.png)
