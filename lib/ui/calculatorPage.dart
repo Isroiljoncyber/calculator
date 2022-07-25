@@ -38,6 +38,7 @@ class _CalculatorPageState extends State<CalculatorPage>
   ];
 
   double textSize = 80;
+  double textSizeTop = 40;
   var answer = '';
 
   Alignment startAlignment = const Alignment(-1, 0);
@@ -49,6 +50,10 @@ class _CalculatorPageState extends State<CalculatorPage>
   late AnimationController animationController;
   late Animation<Alignment> animAlign;
 
+  late String main;
+  late String top;
+  late String temple;
+
   @override
   void initState() {
     animationController = AnimationController(
@@ -58,8 +63,8 @@ class _CalculatorPageState extends State<CalculatorPage>
     _textEditingControllerTop = TextEditingController();
     _textEditingControllerMain = TextEditingController();
 
-    _textEditingControllerTop.text = "0";
     _textEditingControllerMain.text = "0";
+    _textEditingControllerTop.text = "0";
     _textEditingControllerMain.addListener(() {});
 
     super.initState();
@@ -73,7 +78,9 @@ class _CalculatorPageState extends State<CalculatorPage>
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Size size = MediaQuery
+        .of(context)
+        .size;
     return Scaffold(
       backgroundColor: clrBackground,
       body: SafeArea(
@@ -164,7 +171,7 @@ class _CalculatorPageState extends State<CalculatorPage>
                     enabled: false,
                     controller: _textEditingControllerTop,
                     style: TextStyle(
-                      fontSize: 40,
+                      fontSize: textSizeTop,
                       color: clrTextTop,
                       fontWeight: FontWeight.w300,
                     ),
@@ -270,99 +277,205 @@ class _CalculatorPageState extends State<CalculatorPage>
         break;
       case "+":
         {
-          String temp = _textEditingControllerMain.text;
-          if (temp != "0" && temp != "") {
-            textAppend(text: symbols[index]);
+          if (isLastDecimal()) {
+            String temp = _textEditingControllerTop.text;
+            if (temp != "0" && temp != "") {
+              textAppend(text: symbols[index]);
+              _textEditingControllerMain.text = "0";
+            }
           }
         }
         break;
       case "×":
         {
-          String temp = _textEditingControllerMain.text;
-          if (temp != "0" && temp != "") {
-            textAppend(text: symbols[index]);
+          if (isLastDecimal()) {
+            String temp = _textEditingControllerTop.text;
+            if (temp != "0" && temp != "") {
+              textAppend(text: symbols[index]);
+              _textEditingControllerMain.text = "0";
+            }
           }
         }
         break;
       case "-":
         {
-          String temp = _textEditingControllerMain.text;
-          if (temp != "0" && temp != "") {
-            textAppend(text: symbols[index]);
+          if (isLastDecimal()) {
+            String temp = _textEditingControllerTop.text;
+            if (temp != "0" && temp != "") {
+              textAppend(text: symbols[index]);
+              _textEditingControllerMain.text = "0";
+            }
           }
         }
         break;
       case "÷":
         {
-          String temp = _textEditingControllerMain.text;
-          if (temp != "0" && temp != "") {
-            textAppend(text: symbols[index]);
+          if (isLastDecimal()) {
+            String temp = _textEditingControllerTop.text;
+            if (temp != "0" && temp != "") {
+              textAppend(text: symbols[index]);
+              _textEditingControllerMain.text = "0";
+            }
           }
         }
         break;
       case "=":
-        // textAppend(text: symbols[index]);
+        {
+          if (_textEditingControllerMain.text.toString() != "0") {
+            _textEditingControllerTop.text =
+                _textEditingControllerMain.text.toString();
+            _textEditingControllerMain.text = "0";
+          }
+        }
         break;
       case "C":
         {
-          _
+          _textEditingControllerMain.text = "0";
+          _textEditingControllerTop.text = "0";
+          setState(() {});
         }
         break;
       case "⌫":
         {
-          String temp = _textEditingControllerMain.text;
+          String temp = _textEditingControllerTop.text;
           if (temp.isNotEmpty) {
             temp = temp.substring(0, temp.length - 1);
           }
           if (temp.isEmpty) {
             temp = "0";
           }
+          _textEditingControllerTop.text = temp;
           _textEditingControllerMain.text = temp;
-          textAppend();
+          if (isAvailableForCalc()) {
+            equalPressed();
+          }
         }
         break;
       case ".":
         {
-          String temp = _textEditingControllerMain.text;
+          String temp = _textEditingControllerTop.text;
           if (!temp.contains(".")) {
-            temp += ".";
+            textAppend(text: ".");
           }
-          _textEditingControllerMain.text = temp;
-          textAppend();
+          // _textEditingControllerTop.text = temp;
+        }
+        break;
+      case "+/-":
+        {
+          String temp = _textEditingControllerMain.text;
+          if (temp != "0") {
+            _textEditingControllerMain.text = "-$temp";
+            if (temp[0] == "-") {
+              _textEditingControllerMain.text = temp.replaceAll("-", "");
+            }
+          }
+          // _textEditingControllerTop.text = temp;
+        }
+        break;
+      case "%":
+        {
+          String temp = _textEditingControllerMain.text;
+          if (temp != "0") {
+            equalPressed(mathEx: "$temp/100");
+          }
+          // _textEditingControllerTop.text = temp;
         }
         break;
     }
+    changeTextSize();
   }
 
-  textAppend({String text = ""}) {
-    if (_textEditingControllerMain.text.toString() == "0") {
-      _textEditingControllerMain.text = "";
+  changeTextSize() {
+    if (_textEditingControllerMain.text.length > 9) {
+      textSize = 50;
+    } else if (_textEditingControllerMain.text.length > 8) {
+      textSize = 60;
+    } else if (_textEditingControllerMain.text.length > 7) {
+      textSize = 70;
     }
-    if (_textEditingControllerMain.text.length < 10) {
-      if (_textEditingControllerMain.text.length > 9) {
-        textSize = 50;
-      } else if (_textEditingControllerMain.text.length > 8) {
-        textSize = 60;
-      } else if (_textEditingControllerMain.text.length > 7) {
-        textSize = 70;
-      }
-      if (text.isNotEmpty) {
-        String temp = _textEditingControllerMain.text;
-        _textEditingControllerMain.text = temp + text;
-      }
+
+    if (_textEditingControllerTop.text.length > 19) {
+      textSizeTop = 25;
+    } else if (_textEditingControllerTop.text.length > 15) {
+      textSizeTop = 30;
+    } else {
+      textSizeTop = 40;
     }
     setState(() {});
   }
 
-  void equalPressed() {
-    String finaluserinput = _textEditingControllerMain.text;
-    finaluserinput = _textEditingControllerMain.text.replaceAll('×', '*');
+  textAppend({String text = ""}) {
+    if (_textEditingControllerMain.text.toString() == "0" && text != ".") {
+      _textEditingControllerMain.text = "";
+    }
+    if (_textEditingControllerTop.text.toString() == "0" && text != ".") {
+      _textEditingControllerTop.text = "";
+    }
+    changeTextSize();
+    if (text.isNotEmpty) {
+      String temp = _textEditingControllerTop.text;
+      if (!isAvailableForCalc()) {
+        _textEditingControllerMain.text += text;
+      }
+      _textEditingControllerTop.text = temp + text;
+    }
+    if (isAvailableForCalc()) {
+      equalPressed();
+    }
+    setState(() {});
+  }
+
+  void equalPressed({String mathEx = ""}) {
+    bool isDecimal = false;
+    String temp;
+    String finalUserInput;
+    finalUserInput = mathEx;
+    if (mathEx == "") {
+      finalUserInput = _textEditingControllerTop.text
+          .replaceAll('×', '*')
+          .replaceAll('÷', '/');
+    }
 
     Parser p = Parser();
-    Expression exp = p.parse(finaluserinput);
+    Expression exp = p.parse(finalUserInput);
     ContextModel cm = ContextModel();
     double eval = exp.evaluate(EvaluationType.REAL, cm);
     answer = eval.toString();
+
+    temp = answer.substring(answer.indexOf(".") + 1, answer.length);
+    for (int i = 1; i <= 9; i++) {
+      if (temp.contains("$i")) {
+        isDecimal = true;
+        break;
+      }
+    }
+
+    temp = answer;
+    if (!isDecimal) {
+      temp = answer.substring(0, answer.indexOf("."));
+    }
+    if (temp.length > 7) {
+      _textEditingControllerMain.text = temp.substring(0, 8);
+    } else {
+      _textEditingControllerMain.text = temp;
+    }
+  }
+
+  bool isAvailableForCalc() {
+    String temp = _textEditingControllerTop.text.toString();
+    return ((temp.contains("-") ||
+        temp.contains("+") ||
+        temp.contains("×") ||
+        temp.contains("÷")) &&
+        isLastDecimal());
+  }
+
+  bool isLastDecimal() {
+    String temp = _textEditingControllerTop.text.toString();
+    return (temp[temp.length - 1] != "÷" &&
+        temp[temp.length - 1] != "×" &&
+        temp[temp.length - 1] != "+" &&
+        temp[temp.length - 1] != "-");
   }
 
   void showInSnackBar(String value) {
